@@ -2,14 +2,17 @@ import math;
 
 ## customize!!!!!!!
 ## tries to turn the numbers back into letters
-convert_char = False
+convert_char = True
 new_base = int(10)
 row_length = 50
+numb_length = 8
 ## coded to be decoded below
 coded = "01110010 01100001 00100000 01110010 01100001 00100000 01110010 01100001 01110011 01110000 01110101 01110100 01101001 01101110 00100000 01101100 01101111 01110110 01100101 01110010 00100000 01101111 01100110 00100000 01110100 01101000 01100101 00100000 01110010 01110101 01110011 01110011 01101001 01100001 01101110 00100000 01110001 01110101 01100101 01100101 01101110 00100000 01101111 01101000 00100000 01100110 01110101 01100011 01101011 00100000 01100001 01101110 00100000 01100101 01101110 01100100 01100101 01110010 01101101 01100001 01101110"
 
 
+to_b_coded = ""
 
+encoded = ""
 
 
 
@@ -70,6 +73,8 @@ def math_time(base_1, base_2, starting_number):
 
 
 def number_to_list(number):
+  if type(number) != str:
+    number = str(number)
   count = 0
   list_1 = [""]
   while count < len(number):
@@ -82,38 +87,89 @@ def number_to_list(number):
 
 list_pos = []
 list_p = ""
+correct = False
+end = "" 
 
-## decodes entire thing as one number
-""""
-coded_1 = coded.replace(" ", "")
-print(math_time(2,16,coded_1))
-print(len(coded_1), len(math_time(2,16,coded_1)))
-"""
-## decodes as each byte is a seperate number
-if " " not in coded:
-  while len(coded) > 0:
+while end != "q":
+  option = input('1 or 2: ')
+  correct = False
+  while correct == False:
     try:
-      c_list.append(coded[0:8])
+      option = int(option)
+      if option > 0 and option <3:
+        correct = True
+      else:
+        option = input("I need a correct option: ")
     except:
-      c_list.append(coded[0:len(coded)-1])
-    coded = coded[8:len(coded)]
-else:
-  c_list = coded.split(" ")
-for x in range(0,len(c_list)):
-  place = int(math_time(2,new_base,c_list[x]))
-  list_pos.append(place)
-  ## shifts numbers to letters, can be removed
-  if convert_char == True:
-    list_p += f"{chr(place)}"
-  else:
-    list_p += f"{place} "
+      option = input("I need a correct option: ")
 
-while len(list_p) > 0:
-    try:
-      print_list.append(list_p[0:row_length])
-    except:
-      print_list.append(list_p[0:len(list_p)-1])
-    list_p = list_p[row_length:len(list_p)]
+  if option == 1:
 
-for x in range(0,len(print_list)):
-  print(print_list[x])
+    ## decodes entire thing as one number
+    """"
+    coded_1 = coded.replace(" ", "")
+    print(math_time(2,16,coded_1))
+    print(len(coded_1), len(math_time(2,16,coded_1)))
+    """
+    ## decodes as each byte is a seperate number
+    if " " not in coded:
+      while len(coded) > 0:
+        try:
+          c_list.append(coded[0:8])
+        except:
+          c_list.append(coded[0:len(coded)-1])
+        coded = coded[8:len(coded)]
+    else:
+      c_list = coded.split(" ")
+    for x in range(0,len(c_list)):
+      place = int(math_time(2,new_base,c_list[x]))
+      list_pos.append(place)
+      ## shifts numbers to letters, can be removed
+      if convert_char == True:
+        list_p += f"{chr(place)}"
+      else:
+        list_p += f"{place} "
+
+    while len(list_p) > 0:
+        try:
+          print_list.append(list_p[0:row_length])
+        except:
+          print_list.append(list_p[0:len(list_p)-1])
+        list_p = list_p[row_length:len(list_p)]
+
+    for x in range(0,len(print_list)):
+      print(print_list[x])
+
+  elif option == 2:
+    ncoded_l = []
+    print_row = ""
+    to_b_coded = input("What do you want to say: ")
+    base = input("What base to encode into: ")
+    correct = False
+    while correct == False:
+      try:
+        base = int(base)
+        if base > 0 and base < 36:
+          correct = True
+        else:
+          base = input("I need a base type less than 36: ")
+      except:
+        base = input("I need a base type less than 36: ")
+    for x in range(0, len(to_b_coded)):
+      c_place = int(ord(to_b_coded[x]))
+      place = int(math_time(10,base,c_place))
+      ncoded_l.append(place)
+    
+    print(len(ncoded_l))
+
+    for x in range(0, len(ncoded_l)):
+      char_num = f"{ncoded_l[x]} "
+      while len(char_num) < numb_length + 1:
+        char_num = f"0{char_num}"
+      print_row += char_num
+      if len(print_row) > row_length:
+        print(print_row)
+        print_row = ""
+      if x == len(ncoded_l) - 1:
+        print(print_row)
+  end = input()
