@@ -11,11 +11,6 @@ base_values = {"0":0,"1":1, "2":2,"3":3,"4":4,"5":5,"6":6,"7":7,"8":8,"9":9,"a":
 
 base_list = ["0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q", "r","s","t","u","v","w","x","y","z"]
 
-c_list = []
-
-print_list = ""
-
-
 def read(case):
   if case == 1:
     try: 
@@ -108,110 +103,113 @@ def number_to_list(number):
     count += 1
   number = list_1
   useless = number.pop(-1)
-  return number
+  return number 
 
-
-list_pos = []
-list_p = ""
-correct = False
-end = "" 
-
-while end != "q":
-  print("1: decrypt text\n2: encrypt text")
-  option = input('1 or 2: ')
-  correct = False
-  while correct == False:
-    try:
-      option = int(option)
-      if option > 0 and option <3:
-        correct = True
-      else:
-        option = input("I need a correct option: ")
-    except:
-      option = input("I need a correct option: ")
-
-  if option == 1:
-    print_list = ""
-    ## coded to be decoded below
-    coded = read(1)
-    if coded == "1error" or coded == " " or coded == "":
-      print("Error opening encrypted.txt")
-      coded = "1"
-    else:
-      to_b_coded = ""
-      encoded = ""
-      temp_coded = coded.split(" ")
-      while temp_coded[-1] == " ":
-        temp_coded.pop()
-      old_base = int(temp_coded[-1]) + 1
-      coded = coded[0:len(coded) - 2]
-
-    ## decodes entire thing as one number
-    """"
-    coded_1 = coded.replace(" ", "")
-    print(math_time(2,16,coded_1))
-    print(len(coded_1), len(math_time(2,16,coded_1)))
-    """
-    ## decodes as each byte is a seperate number
-    if " " not in coded:
-      while len(coded) > 0:
-        try:
-          c_list.append(coded[0:8])
-        except:
-          c_list.append(coded[0:len(coded)-1])
-        coded = coded[8:len(coded)]
-    else:
-      c_list = coded.split(" ")
-    for x in range(0,len(c_list)):
-      place = int(math_time(old_base,10,c_list[x]))
-      list_pos.append(place)
-      ## shifts numbers to letters, can be removed
-      if convert_char == True:
-        list_p += f"{chr(place)}"
-      else:
-        list_p += f"{place} "
-
-    while len(list_p) > 0:
-        try:
-          print_list += f"{(list_p[0:row_length])}\n"
-        except:
-          print_list += (list_p[0:len(list_p)-1])
-        list_p = list_p[row_length:len(list_p)]
-    print(f"\n{print_list}")
-    write(print_list, option)
-
-  elif option == 2:
-    ncoded_l = []
-    print_row = ""
-    print_out = ""
-    to_b_coded = input("Write what you want to say in decrypted.txt")
-    to_b_coded = read(option)
-    base = input("What base to encode into: ")
+def main():
+  list_pos = []
+  list_p = ""
+  correct = False 
+  end = ""
+  c_list = []
+  print_list = ""
+  while end != "q":
+    print("1: decrypt text\n2: encrypt text")
+    option = input('1 or 2: ')
     correct = False
     while correct == False:
       try:
-        base = int(base)
-        if base > 0 and base < 36:
+        option = int(option)
+        if option > 0 and option <3:
           correct = True
         else:
-          base = input("I need a base type less than 36: ")
+          option = input("I need a correct option: ")
       except:
-        base = input("I need a base type less than 36: ")
-    for x in range(0, len(to_b_coded)):
-      c_place = int(ord(to_b_coded[x]))
-      place = math_time(10,base,c_place)
-      ncoded_l.append(place)
+        option = input("I need a correct option: ")
 
-    for x in range(0, len(ncoded_l)):
-      char_num = f"{ncoded_l[x]} "
-      while len(char_num) < numb_length + 1:
-        char_num = f"0{char_num}"
-      print_row += char_num
-      if len(print_row) > row_length:
-        print_out += f"{print_row}\n"
-        print_row = ""
-      if x == len(ncoded_l) - 1:
-        print_out += f"{print_row} {base -1}"
-    print_out = print_out.replace("00000000 ", "")
-    write(print_out, option)
-  end = input()
+    if option == 1:
+      print_list = ""
+      ## coded to be decoded below
+      coded = read(1)
+      if coded == "1error" or coded == " " or coded == "":
+        print("Error opening encrypted.txt")
+        coded = "1"
+      else:
+        to_b_coded = ""
+        encoded = ""
+        temp_coded = coded.split(" ")
+        while temp_coded[-1] == " ":
+          temp_coded.pop()
+        old_base = int(temp_coded[-1]) + 1
+        coded = coded[0:len(coded) - 2]
+
+      ## decodes entire thing as one number
+      """"
+      coded_1 = coded.replace(" ", "")
+      print(math_time(2,16,coded_1))
+      print(len(coded_1), len(math_time(2,16,coded_1)))
+      """
+      ## decodes as each byte is a seperate number
+      if " " not in coded:
+        while len(coded) > 0:
+          try:
+            c_list.append(coded[0:8])
+          except:
+            c_list.append(coded[0:len(coded)-1])
+          coded = coded[8:len(coded)]
+      else:
+        c_list = coded.split(" ")
+      for x in range(0,len(c_list)):
+        place = int(math_time(old_base,10,c_list[x]))
+        list_pos.append(place)
+        ## shifts numbers to letters, can be removed
+        if convert_char == True:
+          list_p += f"{chr(place)}"
+        else:
+          list_p += f"{place} "
+
+      while len(list_p) > 0:
+          try:
+            print_list += f"{(list_p[0:row_length])}\n"
+          except:
+            print_list += (list_p[0:len(list_p)-1])
+          list_p = list_p[row_length:len(list_p)]
+      print(f"\n{print_list}")
+      write(print_list, option)
+
+    elif option == 2:
+      ncoded_l = []
+      print_row = ""
+      print_out = ""
+      to_b_coded = input("Write what you want to say in decrypted.txt")
+      to_b_coded = read(option)
+      base = input("What base to encode into: ")
+      correct = False
+      while correct == False:
+        try:
+          base = int(base)
+          if base > 0 and base < 36:
+            correct = True
+          else:
+            base = input("I need a base type less than 36: ")
+        except:
+          base = input("I need a base type less than 36: ")
+      for x in range(0, len(to_b_coded)):
+        c_place = int(ord(to_b_coded[x]))
+        place = math_time(10,base,c_place)
+        ncoded_l.append(place)
+
+      for x in range(0, len(ncoded_l)):
+        char_num = f"{ncoded_l[x]} "
+        while len(char_num) < numb_length + 1:
+          char_num = f"0{char_num}"
+        print_row += char_num
+        if len(print_row) > row_length:
+          print_out += f"{print_row}\n"
+          print_row = ""
+        if x == len(ncoded_l) - 1:
+          print_out += f"{print_row}{base -1}"
+      print_out = print_out.replace("00000000 ", "")
+      write(print_out, option)
+    end = input()
+
+main()
