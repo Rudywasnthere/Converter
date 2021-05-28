@@ -5,17 +5,6 @@ import math;
 convert_char = True
 row_length = 50
 numb_length = 8
-## coded to be decoded below
-coded = "01110010 01100001 00100000 01110010 01100001 00100000 01110010 01100001 01110011 01110000 01110101 01110100 01101001 01101110 00100000 01101100 01101111 01110110 01100101 01110010 00100000 01101111 01100110 00100000 01110100 01101000 01100101 00100000 01110010 01110101 01110011 01110011 01101001 01100001 01101110 00100000 01110001 01110101 01100101 01100101 01101110 00100000 01101111 01101000 00100000 01100110 01110101 01100011 01101011 00100000 01100001 01101110 00100000 01100101 01101110 01100100 01100101 01110010 01101101 01100001 01101110 1"
-
-
-to_b_coded = ""
-
-encoded = ""
-
-old_base = int(coded[len(coded) -1]) + 1
-print(old_base)
-coded = coded[0:len(coded) - 2]
 
 ## dictionaries for changing to different number systems
 base_values = {"0":0,"1":1, "2":2,"3":3,"4":4,"5":5,"6":6,"7":7,"8":8,"9":9,"a":10,"b":11,"c":12,"d":13,"e":14,"f":15,"g":16,"h":17,"i":18,"j":19,"k":20,"l":21,"m":22,"n":23,"o":24,"p":25,"q":26, "r":27,"s":28,"t":29,"u":30,"v":31,"w":32,"x":33,"y":34,"z":35}
@@ -24,8 +13,43 @@ base_list = ["0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f","g"
 
 c_list = []
 
-print_list = []
+print_list = ""
 
+
+def read(case):
+  if case == 1:
+    try: 
+      file= open("encrypted.txt", "r")
+      message= file.read()
+      message = message.replace("\n"," ")
+      return message
+    except FileNotFoundError: 
+      return "1error"
+  if case == 2:
+    try: 
+      file= open("decrypted.txt", "r")
+      message= file.read()
+      message = message.replace("\n"," ")
+      return message
+    except FileNotFoundError: 
+      return "1error"
+
+def write(print_out, case):
+  print_out = str(print_out.replace("", ""))
+  if case == 2:
+    try:
+      new_file = open("encrypted.txt", "w")
+      new_file.write(print_out)
+      print("Encryption written to \"encrypted.txt\"")
+    except:
+      print("Writing to file failed")
+  elif case == 1:
+    try:
+      new_file = open("decrypted.txt", "w")
+      new_file.write(print_out)
+      print("Decryption written to \"decrypted.txt\"")
+    except:
+      print("Writing to file failed")
 ## some borrowed code from a different project, does the number shifting
 def math_time(base_1, base_2, starting_number):
     final_number = ""
@@ -86,12 +110,14 @@ def number_to_list(number):
   useless = number.pop(-1)
   return number
 
+
 list_pos = []
 list_p = ""
 correct = False
 end = "" 
 
 while end != "q":
+  print("1: decrypt text\n2: encrypt text")
   option = input('1 or 2: ')
   correct = False
   while correct == False:
@@ -105,6 +131,20 @@ while end != "q":
       option = input("I need a correct option: ")
 
   if option == 1:
+    print_list = ""
+    ## coded to be decoded below
+    coded = read(1)
+    if coded == "1error" or coded == " " or coded == "":
+      print("Error opening encrypted.txt")
+      coded = "1"
+    else:
+      to_b_coded = ""
+      encoded = ""
+      temp_coded = coded.split(" ")
+      while temp_coded[-1] == " ":
+        temp_coded.pop()
+      old_base = int(temp_coded[-1]) + 1
+      coded = coded[0:len(coded) - 2]
 
     ## decodes entire thing as one number
     """"
@@ -133,18 +173,19 @@ while end != "q":
 
     while len(list_p) > 0:
         try:
-          print_list.append(list_p[0:row_length])
+          print_list += f"{(list_p[0:row_length])}\n"
         except:
-          print_list.append(list_p[0:len(list_p)-1])
+          print_list += (list_p[0:len(list_p)-1])
         list_p = list_p[row_length:len(list_p)]
-
-    for x in range(0,len(print_list)):
-      print(print_list[x])
+    print(f"\n{print_list}")
+    write(print_list, option)
 
   elif option == 2:
     ncoded_l = []
     print_row = ""
-    to_b_coded = input("What do you want to say: ")
+    print_out = ""
+    to_b_coded = input("Write what you want to say in decrypted.txt")
+    to_b_coded = read(option)
     base = input("What base to encode into: ")
     correct = False
     while correct == False:
@@ -158,10 +199,8 @@ while end != "q":
         base = input("I need a base type less than 36: ")
     for x in range(0, len(to_b_coded)):
       c_place = int(ord(to_b_coded[x]))
-      place = int(math_time(10,base,c_place))
+      place = math_time(10,base,c_place)
       ncoded_l.append(place)
-    
-    print(len(ncoded_l))
 
     for x in range(0, len(ncoded_l)):
       char_num = f"{ncoded_l[x]} "
@@ -169,8 +208,10 @@ while end != "q":
         char_num = f"0{char_num}"
       print_row += char_num
       if len(print_row) > row_length:
-        print(print_row)
+        print_out += f"{print_row}\n"
         print_row = ""
       if x == len(ncoded_l) - 1:
-        print(f"{print_row} {base -1}")
+        print_out += f"{print_row} {base -1}"
+    print_out = print_out.replace("00000000 ", "")
+    write(print_out, option)
   end = input()
