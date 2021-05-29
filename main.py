@@ -186,6 +186,8 @@ def main():
       print_out = ""
       to_b_coded = input("Write what you want to say in decrypted.txt")
       to_b_coded = read(option, f"{direct}decrypted.txt")
+      while to_b_coded[-1] == " ":
+        to_b_coded = to_b_coded[0:len(to_b_coded)-1]
       base = input("What base to encode into: ")
       correct = False
       while correct == False:
@@ -204,9 +206,11 @@ def main():
 
       for x in range(0, len(ncoded_l)):
         char_num = f"{ncoded_l[x]} "
+        print(char_num)
         while len(char_num) < numb_length + 1:
           char_num = f"0{char_num}"
         print_row += char_num
+        print(char_num)
         if len(print_row) > row_length:
           print_out += f"{print_row}\n"
           print_row = ""
