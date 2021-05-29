@@ -1,4 +1,5 @@
-import math;
+import math
+import os
 
 ## customize!!!!!!!
 ## tries to turn the numbers back into letters
@@ -11,40 +12,46 @@ base_values = {"0":0,"1":1, "2":2,"3":3,"4":4,"5":5,"6":6,"7":7,"8":8,"9":9,"a":
 
 base_list = ["0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q", "r","s","t","u","v","w","x","y","z"]
 
-def read(case):
+def read(case, files):
   if case == 1:
-    try: 
-      file= open("encrypted.txt", "r")
+    try:
+      file = open(f"{files}", "r")
       message= file.read()
+      file.close()
       message = message.replace("\n"," ")
       return message
-    except FileNotFoundError: 
+    except Exception as e: 
+      print(f"{e} Error opening file")
       return "1error"
   if case == 2:
     try: 
-      file= open("decrypted.txt", "r")
+      file = open(f"{files}", "r")
       message= file.read()
+      file.close()
       message = message.replace("\n"," ")
       return message
-    except FileNotFoundError: 
+    except Exception as e: 
+      print(f"{e} Error opening file")
       return "1error"
 
-def write(print_out, case):
+def write(print_out, case, files):
   print_out = str(print_out.replace("", ""))
   if case == 2:
     try:
-      new_file = open("encrypted.txt", "w")
-      new_file.write(print_out)
+      file = open(f"{files}", "w")
+      file.write(print_out)
+      file.close()
       print("Encryption written to \"encrypted.txt\"")
-    except:
-      print("Writing to file failed")
+    except Exception as e:
+      print(f"{e} Writing to file failed")
   elif case == 1:
     try:
-      new_file = open("decrypted.txt", "w")
-      new_file.write(print_out)
+      file = open(f"{files}", "w")
+      file.write(print_out)
+      file.close()
       print("Decryption written to \"decrypted.txt\"")
-    except:
-      print("Writing to file failed")
+    except Exception as e:
+      print(f"{e} Writing to file failed")
 ## some borrowed code from a different project, does the number shifting
 def math_time(base_1, base_2, starting_number):
     final_number = ""
@@ -105,7 +112,11 @@ def number_to_list(number):
   useless = number.pop(-1)
   return number 
 
+
 def main():
+  direct = os.path.realpath(__file__)
+  direct = direct[0:len(direct)-7]
+  print(direct)
   list_pos = []
   list_p = ""
   correct = False 
@@ -129,10 +140,9 @@ def main():
     if option == 1:
       print_list = ""
       ## coded to be decoded below
-      coded = read(1)
+      coded = read(1, f"{direct}encrypted.txt")
       if coded == "1error" or coded == " " or coded == "":
         print("Error opening encrypted.txt")
-        coded = "1"
       else:
         to_b_coded = ""
         encoded = ""
@@ -142,12 +152,6 @@ def main():
         old_base = int(temp_coded[-1]) + 1
         coded = coded[0:len(coded) - 2]
 
-      ## decodes entire thing as one number
-      """"
-      coded_1 = coded.replace(" ", "")
-      print(math_time(2,16,coded_1))
-      print(len(coded_1), len(math_time(2,16,coded_1)))
-      """
       ## decodes as each byte is a seperate number
       if " " not in coded:
         while len(coded) > 0:
@@ -174,14 +178,14 @@ def main():
             print_list += (list_p[0:len(list_p)-1])
           list_p = list_p[row_length:len(list_p)]
       print(f"\n{print_list}")
-      write(print_list, option)
+      write(print_list, option, f"{direct}decrypted.txt")
 
     elif option == 2:
       ncoded_l = []
       print_row = ""
       print_out = ""
       to_b_coded = input("Write what you want to say in decrypted.txt")
-      to_b_coded = read(option)
+      to_b_coded = read(option, f"{direct}decrypted.txt")
       base = input("What base to encode into: ")
       correct = False
       while correct == False:
@@ -209,7 +213,12 @@ def main():
         if x == len(ncoded_l) - 1:
           print_out += f"{print_row}{base -1}"
       print_out = print_out.replace("00000000 ", "")
-      write(print_out, option)
+      """"
+      for x in range(1,math.floor(len(print_out)/7)):
+        position_remove = int(x*7 - x + 1)
+        print_out = print_out[0:position_remove] + print_out[position_remove +1: len(print_out)]
+      """
+      write(print_out, option, f"{direct}encrypted.txt")
     end = input()
 
 main()
